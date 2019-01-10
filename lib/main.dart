@@ -18,19 +18,28 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         fontFamily: 'Open Sans',
       ),
-      home: new HomePage(),
+      home: new FirstScreen(),
     );
   }
 }
 
 class CustomTextStyle {
-  static TextStyle display5(BuildContext context) {
+  static TextStyle label (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.normal,
+      fontSize: 14.0,
+      color: Colors.white30,
+    );
+  }
+
+  static TextStyle button (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
       fontSize: 34.0,
       color: Colors.white,
     );
   }
+
 }
 
 class HomePage extends StatelessWidget {
@@ -44,11 +53,71 @@ class HomePage extends StatelessWidget {
 
             child: new Text(
               'NJI Media',
-              style: CustomTextStyle.display5(context),
+              style: CustomTextStyle.button(context),
             ),
           ),
         ),
       ],
     ),
   );
+}
+
+class FirstScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'I / O',
+          style: CustomTextStyle.label(context),
+        ),
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: RaisedButton(
+          color: Colors.transparent,
+          child: Text(
+            'NJI Media',
+            style: CustomTextStyle.button(context),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SecondScreen()),
+            );
+          }
+        ),
+      ),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+        'SOURCE',
+          style: CustomTextStyle.label(context),
+        ),
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: RaisedButton(
+          color: Colors.transparent,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Back',
+          style: CustomTextStyle.button(context),
+            ),
+        ),
+      ),
+    );
+  }
 }
