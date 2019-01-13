@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData (
         canvasColor: Colors.black,
         cardColor: Colors.black,
-        primaryColor: Colors.white,
+        primaryColor: Colors.black,
+        accentColor: Colors.white,
         fontFamily: 'Open Sans',
       ),
       home: new ScreenSplash(),
@@ -47,10 +48,23 @@ class CustomTextStyle {
   }
 }
 
-class ScreenSplash extends StatelessWidget {
+class ScreenSplash extends StatefulWidget {
+  @override
+  _ScreenSplashState createState() => _ScreenSplashState();
+}
+
+class _ScreenSplashState extends State<ScreenSplash> {
+
+  bool _isWorking = false;
 
   void checkNetwork(context) async {
+
+    setState(() {
+      _isWorking = true;
+    });
+
     var connectivityResult = await (new Connectivity().checkConnectivity());
+
     if ( connectivityResult != ConnectivityResult.wifi) {
       print('No wifi.');
       Navigator.push(
@@ -59,6 +73,9 @@ class ScreenSplash extends StatelessWidget {
       );
     } else {
       print('Network test passed.');
+      // Here, need progress spinner, and need to test for response from
+      // device.
+
       // Only proceed to Power Screen if power is on standby.
       http.post(
       receiverAPI + "system",
@@ -80,32 +97,32 @@ class ScreenSplash extends StatelessWidget {
         }
       });
     }
+    _isWorking = false;
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'I / O',
-          style: CustomTextStyle.label(context),
-        ),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: RaisedButton(
-          color: Colors.transparent,
-          child: Text(
-            'NJI Media',
-            style: CustomTextStyle.button(context),
+    return GestureDetector(
+      onTap: () {
+        checkNetwork(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'I / O',
+            style: CustomTextStyle.label(context),
           ),
-          onPressed: () {
-            checkNetwork(context);
-          }
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
         ),
-      ),
+        body: Center(
+          child: (_isWorking
+            ? CircularProgressIndicator()
+            : Image.asset('assets/logo-nji-white.png', width: 240)
+          ),
+        )
+      )
     );
   }
 }
