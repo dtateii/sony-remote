@@ -4,11 +4,10 @@ import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 void main() => runApp(MyApp());
 
-var receiverAPI = 'http://192.168.86.243:10000/sony/'; // avContent';
+var receiverAPI = 'http://192.168.86.27:10000/sony/';
 
 class MyApp extends StatelessWidget {
   @override
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         fontFamily: 'Open Sans',
       ),
-      home: new FirstScreen(),
+      home: new ScreenSplash(),
     );
   }
 }
@@ -34,7 +33,7 @@ class CustomTextStyle {
   static TextStyle label (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.normal,
-      fontSize: 28.0,
+      fontSize: 22.0,
       color: Colors.white30,
     );
   }
@@ -46,29 +45,43 @@ class CustomTextStyle {
       color: Colors.white,
     );
   }
-
 }
 
-// class HomePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) => new Scaffold(
-//     body: new Column(
-//       crossAxisAlignment: CrossAxisAlignment.stretch,
-//       children: [
-//         new Card(
-//           child: new Container(
-//             child: new Text(
-//               'NJI Media',
-//               style: CustomTextStyle.button(context),
-//             ),
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
+class ScreenSplash extends StatelessWidget {
 
-class FirstScreen extends StatelessWidget {
+  void checkNetwork(context) async {
+    var connectivityResult = await (new Connectivity().checkConnectivity());
+    if ( connectivityResult != ConnectivityResult.wifi) {
+      print('No wifi.');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenErrorWifi()),
+      );
+    } else {
+      print('Network test passed.');
+      // Only proceed to Power Screen if power is on standby.
+      http.post(
+      receiverAPI + "system",
+      body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}')
+      .then((response){
+        if (200 == response.statusCode) {
+          var apiRes = jsonDecode(response.body);
+          if (apiRes['result'][0]['status'] == "active") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScreenSource()),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScreenPower()),
+            );
+          }
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -89,10 +102,7 @@ class FirstScreen extends StatelessWidget {
             style: CustomTextStyle.button(context),
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SetupPage()),
-            );
+            checkNetwork(context);
           }
         ),
       ),
@@ -100,7 +110,36 @@ class FirstScreen extends StatelessWidget {
   }
 }
 
-class ErrorScreenWifi extends StatelessWidget {
+class ScreenSource extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+        'SOURCE',
+          style: CustomTextStyle.label(context),
+        ),
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: RaisedButton(
+          color: Colors.transparent,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Source Selection...',
+          style: CustomTextStyle.button(context),
+            ),
+        ),
+      ),
+    );
+  }
+}
+
+class ScreenErrorWifi extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,75 +167,101 @@ class ErrorScreenWifi extends StatelessWidget {
   }
 }
 
+class ScreenPower extends StatelessWidget {
 
-class SetupPage extends StatefulWidget {
-  @override
-  _SetupPageState createState() => new _SetupPageState();
-}
-
-class _SetupPageState extends State<SetupPage> {
-
-  var _connectionStatus = 'Unknown';
-  Connectivity connectivity;
-  StreamSubscription<ConnectivityResult> subscription;
-
-  @override
-  void initState() {
-    super.initState();
-    connectivity = new Connectivity();
-    subscription =
-        connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      _connectionStatus = result.toString();
-      print(_connectionStatus);
-      if (result == ConnectivityResult.none) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ErrorScreenWifi()),
-        );
-      }
-    });
+  Future _getPowerStatus(context) async {
+    var response = await http.post(
+      receiverAPI + "system",
+      body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}');
+    if (200 == response.statusCode) {
+      var apiRes = jsonDecode(response.body);
+      return apiRes['result'][0];
+    } else {
+      return false;
+    }
   }
 
-  @override
-  void dispose() {
-    subscription.cancel();
-    super.dispose();
+  Future _powerUp(context) async {
+    var response = await http.post(
+      receiverAPI + "system",
+      body: '{"method": "setPowerStatus","id": 65,"params": [{"status":"active"}],"version": "1.1"}');
+    if (200 == response.statusCode) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenSource()),
+      );
+    }
   }
 
-  Future getData() async {
-    http.Response response =
-        await http.get("https://jsonplaceholder.typicode.com/posts/");
-    if (response.statusCode == HttpStatus.ok) {
-      var result = jsonDecode(response.body);
-      return result;
+  Future _powerDown(context) async {
+    var response = await http.post(
+      receiverAPI + "system",
+      body: '{"method": "setPowerStatus","id": 65,"params": [{"status":"off"}],"version": "1.1"}');
+    if (200 == response.statusCode) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ScreenSplash()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: Text("Connectivity")),
-        body: new FutureBuilder(
-          future: getData(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var mydata = snapshot.data;
-              return new ListView.builder(
-                itemBuilder: (context, i) => new ListTile(
-                      title: Text(
-                        mydata[i]['title'],
-                        style: CustomTextStyle.label(context),
+      appBar: AppBar(
+        title: Text(
+        'POWER',
+          style: CustomTextStyle.label(context),
+        ),
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: new FutureBuilder(
+          future: _getPowerStatus(context),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                print('Error: ${snapshot.error}');
+                throw('API Error');
+              } else {
+                if (snapshot.data['status'] == 'standby') {
+                  return Center(
+                    child: RaisedButton(
+                      color: Colors.transparent,
+                      onPressed: () {
+                        _powerUp(context);
+                      },
+                      child: Text(
+                        'Power Up',
+                        style: CustomTextStyle.button(context),
                       ),
-                      // subtitle: Text(mydata[i]['body']),
                     ),
-                itemCount: mydata.length,
-              );
+                  );
+                }
+                if (snapshot.data['status'] == 'active') {
+                  return Center(
+                    child: RaisedButton(
+                      color: Colors.transparent,
+                      onPressed: () {
+                        _powerDown(context);
+                      },
+                      child: Text(
+                        'Power Down',
+                        style: CustomTextStyle.button(context),
+                      ),
+                    ),
+                  );
+                }
+              }
             } else {
               return Center(
-                child: new CircularProgressIndicator(),
+                child: CircularProgressIndicator(),
               );
             }
-          },
-        ));
+          }
+        )
+      )
+    );
   }
 }
