@@ -34,7 +34,7 @@ class CustomTextStyle {
   static TextStyle label (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.normal,
-      fontSize: 22.0,
+      fontSize: 24.0,
       color: Colors.white30,
     );
   }
@@ -46,6 +46,23 @@ class CustomTextStyle {
       color: Colors.white,
     );
   }
+
+  static TextStyle buttonYellow (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.w100,
+      fontSize: 46.0,
+      color: Color(0xFFebff4e),
+    );
+  }
+
+  static TextStyle buttonRed (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.w100,
+      fontSize: 46.0,
+      color: Color(0xFFff206f),
+    );
+  }
+
 }
 
 class ScreenSplash extends StatefulWidget {
@@ -73,10 +90,10 @@ class _ScreenSplashState extends State<ScreenSplash> {
       );
     } else {
       print('Network test passed.');
-      // Here, need progress spinner, and need to test for response from
-      // device.
 
-      // Only proceed to Power Screen if power is on standby.
+      // Todo: Need to handle unresponsive device.
+
+      // Only proceed to Screen if power is on standby.
       http.post(
       receiverAPI + "system",
       body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}')
@@ -108,19 +125,32 @@ class _ScreenSplashState extends State<ScreenSplash> {
         checkNetwork(context);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'I / O',
-            style: CustomTextStyle.label(context),
-          ),
-          backgroundColor: Colors.transparent,
-          centerTitle: true,
-        ),
-        body: Center(
-          child: (_isWorking
-            ? CircularProgressIndicator()
-            : Image.asset('assets/logo-nji-white.png', width: 240)
-          ),
+        body: Container(
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top:70),
+                      child: Text(
+                        'I / O',
+                        style: CustomTextStyle.label(context),
+                      )
+                    ),
+                    Container (
+                      padding: const EdgeInsets.only(top: 340),
+                      child: (_isWorking
+                        ? CircularProgressIndicator()
+                        : Image.asset('assets/logo-nji-white.png', width: 240)
+                      ),
+                    )
+                  ],
+                )
+              ),
+            ]
+          )
         )
       )
     );
@@ -131,26 +161,40 @@ class ScreenSource extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-        'SOURCE',
-          style: CustomTextStyle.label(context),
-        ),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: RaisedButton(
-          color: Colors.transparent,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text(
-            'Source Selection...',
-          style: CustomTextStyle.button(context),
+      appBar: AppBar(),
+      body: Container(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top:20),
+                    child: Text(
+                      'SOURCE',
+                      style: CustomTextStyle.label(context),
+                    )
+                  ),
+                  Container (
+                    padding: const EdgeInsets.only(top: 100),
+                    child: RaisedButton(
+                      color: Colors.transparent,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Sources List...',
+                      style: CustomTextStyle.button(context),
+                        ),
+                    ),
+                  )
+                ],
+              )
             ),
-        ),
-      ),
+          ]
+        )
+      )
     );
   }
 }
@@ -160,26 +204,40 @@ class ScreenErrorWifi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-        'NO NETWORK',
-          style: CustomTextStyle.label(context),
-        ),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: RaisedButton(
-          color: Colors.transparent,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text(
-            'Uh oh. Need Wifi.',
-          style: CustomTextStyle.button(context),
+      appBar: AppBar(),
+      body: Container(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top:20),
+                    child: Text(
+                      'NO NETWORK',
+                      style: CustomTextStyle.label(context),
+                    )
+                  ),
+                  Container (
+                    padding: const EdgeInsets.only(top: 100),
+                    child: RaisedButton(
+                      color: Colors.transparent,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Uh Oh. Need wifi.',
+                      style: CustomTextStyle.buttonRed(context),
+                        ),
+                    ),
+                  )
+                ],
+              )
             ),
-        ),
-      ),
+          ]
+        )
+      )
     );
   }
 }
@@ -225,59 +283,71 @@ class ScreenPower extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: AppBar(
-        title: Text(
-        'POWER',
-          style: CustomTextStyle.label(context),
-        ),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: new FutureBuilder(
-          future: _getPowerStatus(context),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                print('Error: ${snapshot.error}');
-                throw('API Error');
-              } else {
-                if (snapshot.data['status'] == 'standby') {
-                  return Center(
-                    child: RaisedButton(
-                      color: Colors.transparent,
-                      onPressed: () {
-                        _powerUp(context);
-                      },
-                      child: Text(
-                        'Power Up',
-                        style: CustomTextStyle.button(context),
-                      ),
-                    ),
-                  );
-                }
-                if (snapshot.data['status'] == 'active') {
-                  return Center(
-                    child: RaisedButton(
-                      color: Colors.transparent,
-                      onPressed: () {
-                        _powerDown(context);
-                      },
-                      child: Text(
-                        'Power Down',
-                        style: CustomTextStyle.button(context),
-                      ),
-                    ),
-                  );
-                }
-              }
+      appBar: AppBar(),
+      body: new FutureBuilder(
+        future: _getPowerStatus(context),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              print('Error: ${snapshot.error}');
+              throw('API Error');
             } else {
-              return Center(
-                child: CircularProgressIndicator(),
+              return Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(top:20),
+                          child: ( snapshot.data['status'] == 'standby'
+                            ? Text(
+                              'RECEIVER IS OFF',
+                              style: CustomTextStyle.label(context),
+                            )
+                            : Text(
+                              'RECEIVER IS ON',
+                              style: CustomTextStyle.label(context),
+                            )
+                          )
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top:200),
+                          child: ( snapshot.data['status'] == 'standby'
+                            ? RaisedButton(
+                              color: Colors.transparent,
+                              onPressed: () {
+                                _powerUp(context);
+                              },
+                              child: Text(
+                                'Power Up',
+                                style: CustomTextStyle.buttonYellow(context),
+                              ),
+                            )
+                            : RaisedButton(
+                              color: Colors.transparent,
+                              onPressed: () {
+                                _powerDown(context);
+                              },
+                              child: Text(
+                                'Power Down',
+                                style: CustomTextStyle.buttonRed(context),
+                              ),
+                            )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                ],
               );
             }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
-        )
+        }
       )
     );
   }
