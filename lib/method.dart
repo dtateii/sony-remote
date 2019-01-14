@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'audioControls.dart';
-import 'method.dart';
+import 'dest.dart';
 import 'model.dart';
 
-class ScreenSource extends StatefulWidget {
+class ScreenMethod extends StatefulWidget {
   @override
-  _SourceState createState() => _SourceState();
+  _MethodState createState() => _MethodState();
 }
 
-class _SourceState extends State<ScreenSource> {
+class _MethodState extends State<ScreenMethod> {
 
-  _pickSource(value, context) {
-    IO.source = value;
-    print('source picked: ' + value);
-    Navigator.push(
+  _pickMethod(value) {
+    IO.method = value;
+    print('method picked: ' + value);
+     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ScreenMethod()),
+      MaterialPageRoute(builder: (context) => ScreenDest()),
     );
   }
 
@@ -35,7 +35,7 @@ class _SourceState extends State<ScreenSource> {
                   Container(
                     padding: const EdgeInsets.only(top:20),
                     child: Text(
-                      'SOURCE',
+                      'METHOD',
                       style: CustomTextStyle.label(context),
                     )
                   ),
@@ -46,37 +46,30 @@ class _SourceState extends State<ScreenSource> {
                       children: [
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Conf Room Mac', style: CustomTextStyle.button(context)),
+                          child: Text('AirPlay', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('confmac', context);
+                            _pickMethod('airplay');
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Macbook', style: CustomTextStyle.button(context)),
+                          child: Text('ChromeCast', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('macbook', context);
+                            _pickMethod('chromecast');
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('AppleTV', style: CustomTextStyle.button(context)),
+                          child: Text('HDMI', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('appletv', context);
+                            _pickMethod('hdmi');
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
                           child: Text('Google Meet', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('meet', context);
-                          },
-                        ),
-                        FlatButton(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('PC', style: CustomTextStyle.button(context)),
-                          onPressed: () {
-                            _pickSource('pc', context);
+                            _pickMethod('meet');
                           },
                         ),
                       ]

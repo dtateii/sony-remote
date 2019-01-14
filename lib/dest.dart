@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'audioControls.dart';
-import 'method.dart';
 import 'model.dart';
 
-class ScreenSource extends StatefulWidget {
+class ScreenDest extends StatefulWidget {
   @override
-  _SourceState createState() => _SourceState();
+  _DestState createState() => _DestState();
 }
 
-class _SourceState extends State<ScreenSource> {
+class _DestState extends State<ScreenDest> {
 
-  _pickSource(value, context) {
-    IO.source = value;
-    print('source picked: ' + value);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScreenMethod()),
-    );
+  _pickDest(value) {
+    print(IO.source + " via " + IO.method);
+    print('dest picked: ' + value);
   }
 
   @override
@@ -35,7 +30,7 @@ class _SourceState extends State<ScreenSource> {
                   Container(
                     padding: const EdgeInsets.only(top:20),
                     child: Text(
-                      'SOURCE',
+                      'DESTINATION',
                       style: CustomTextStyle.label(context),
                     )
                   ),
@@ -46,37 +41,23 @@ class _SourceState extends State<ScreenSource> {
                       children: [
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Conf Room Mac', style: CustomTextStyle.button(context)),
+                          child: Text('TV', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('confmac', context);
+                            _pickDest('tv');
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Macbook', style: CustomTextStyle.button(context)),
+                          child: Text('Projector', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('macbook', context);
+                            _pickDest('projector');
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('AppleTV', style: CustomTextStyle.button(context)),
+                          child: Text('Speakers', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('appletv', context);
-                          },
-                        ),
-                        FlatButton(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Google Meet', style: CustomTextStyle.button(context)),
-                          onPressed: () {
-                            _pickSource('meet', context);
-                          },
-                        ),
-                        FlatButton(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('PC', style: CustomTextStyle.button(context)),
-                          onPressed: () {
-                            _pickSource('pc', context);
+                            _pickDest('audio');
                           },
                         ),
                       ]
