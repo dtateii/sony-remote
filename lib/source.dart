@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'audioControls.dart';
 
 class ScreenSource extends StatelessWidget {
 
@@ -40,7 +41,8 @@ class ScreenSource extends StatelessWidget {
             ),
           ]
         )
-      )
+      ),
+      bottomSheet: AudioControls(),
     );
   }
 }
