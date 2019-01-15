@@ -40,7 +40,7 @@ class _MethodState extends State<ScreenMethod> {
                     )
                   ),
                   Container(
-                    padding: const EdgeInsets.only(top:160),
+                    padding: const EdgeInsets.only(top:120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [

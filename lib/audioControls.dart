@@ -25,7 +25,7 @@ class _AudioControlsState extends State<AudioControls> {
       //   onChanged: volumeChange(),
       //   value: _volume,
       // )
-      child: Text('Volume', style: CustomTextStyle.label(context))
+      child: Text('', style: CustomTextStyle.label(context))
     );
   }
 }

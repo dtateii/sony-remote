@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'audioControls.dart';
 import 'method.dart';
+import 'dest.dart';
 import 'model.dart';
 
 class ScreenSource extends StatefulWidget {
@@ -13,11 +14,24 @@ class _SourceState extends State<ScreenSource> {
 
   _pickSource(value, context) {
     IO.source = value;
-    print('source picked: ' + value);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ScreenMethod()),
-    );
+
+    switch (IO.source) {
+      case 'confmac':
+      case 'appletv':
+      case 'meet':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ScreenDest()),
+        );
+        break;
+      case 'macbook':
+      case 'pc':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ScreenMethod()),
+        );
+        break;
+    }
   }
 
   @override
@@ -40,22 +54,22 @@ class _SourceState extends State<ScreenSource> {
                     )
                   ),
                   Container(
-                    padding: const EdgeInsets.only(top:160),
+                    padding: const EdgeInsets.only(top:120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Conf Room Mac', style: CustomTextStyle.button(context)),
+                          child: Text('Any Macbook', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('confmac', context);
+                            _pickSource('macbook', context);
                           },
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Macbook', style: CustomTextStyle.button(context)),
+                          child: Text('Conf Room Mac', style: CustomTextStyle.button(context)),
                           onPressed: () {
-                            _pickSource('macbook', context);
+                            _pickSource('confmac', context);
                           },
                         ),
                         FlatButton(
@@ -74,7 +88,7 @@ class _SourceState extends State<ScreenSource> {
                         ),
                         FlatButton(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('PC', style: CustomTextStyle.button(context)),
+                          child: Text('Any PC', style: CustomTextStyle.button(context)),
                           onPressed: () {
                             _pickSource('pc', context);
                           },

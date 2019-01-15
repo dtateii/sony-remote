@@ -33,4 +33,20 @@ class CustomTextStyle {
     );
   }
 
+  static TextStyle buttonGreen (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.w100,
+      fontSize: 46.0,
+      color: Color(0xFF21ffbb),
+    );
+  }
+
+  static TextStyle buttonDisabled (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.w100,
+      fontSize: 46.0,
+      fontStyle: FontStyle.italic,
+      color: Color(0xFF999999),
+    );
+  }
 }

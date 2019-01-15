@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'theme.dart';
+import 'config.dart' as appConf;
+import 'package:http/http.dart' as http;
 import 'audioControls.dart';
 import 'model.dart';
 
@@ -10,9 +13,41 @@ class ScreenDest extends StatefulWidget {
 
 class _DestState extends State<ScreenDest> {
 
-  _pickDest(value) {
+  // bool _isAudioAllowed = true;
+
+  Future _pickDest(value) async {
     print(IO.source + " via " + IO.method);
     print('dest picked: ' + value);
+
+    String input;
+
+    // Set the true input value depending on if it was
+    // directly (source) or indirectly (method) picked.
+    switch (IO.source) {
+      case 'confmac':
+      case 'appletv':
+      case 'meet':
+        input = IO.source;
+        break;
+      case 'macbook':
+      case 'pc':
+        (IO.method == 'airplay')
+        ? input = 'appletv'
+        : input = IO.method;
+        break;
+    }
+
+    var inputUri = appConf.Routing.getUri(input);
+    var outputUri = appConf.Routing.getUri(value);
+    var response = await http.post(
+      appConf.Api.getUri("avContent"),
+      body: '{"method": "setPlayContent","id": 65,"params": [{"output":"' + outputUri + '", "uri":"' + inputUri + '"}],"version": "1.2"}');
+    if (200 == response.statusCode) {
+      var apiRes = jsonDecode(response.body);
+      print(apiRes);
+    } else {
+      print('http error');
+    }
   }
 
   @override
@@ -35,7 +70,7 @@ class _DestState extends State<ScreenDest> {
                     )
                   ),
                   Container(
-                    padding: const EdgeInsets.only(top:160),
+                    padding: const EdgeInsets.only(top:120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -53,13 +88,22 @@ class _DestState extends State<ScreenDest> {
                             _pickDest('projector');
                           },
                         ),
-                        FlatButton(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: Text('Speakers', style: CustomTextStyle.button(context)),
-                          onPressed: () {
-                            _pickDest('audio');
-                          },
-                        ),
+                        // FlatButton(
+                        //   padding: const EdgeInsets.only(bottom: 40),
+                        //   child: ( _isAudioAllowed
+                        //     ? Text(
+                        //       'Speakers',
+                        //       style: CustomTextStyle.button(context))
+                        //     : Text(
+                        //       'Speakers',
+                        //       style: CustomTextStyle.buttonDisabled(context))
+                        //   ),
+                        //   onPressed: () {
+                        //     if(_isAudioAllowed) {
+                        //       _pickDest('audio');
+                        //     }
+                        //   },
+                        // ),
                       ]
                     ),
                   ),
