@@ -4,7 +4,7 @@ class CustomTextStyle {
   static TextStyle label (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.normal,
-      fontSize: 24.0,
+      fontSize: 18.0,
       color: Colors.white30,
     );
   }
@@ -12,7 +12,7 @@ class CustomTextStyle {
   static TextStyle button (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
-      fontSize: 46.0,
+      fontSize: 34.0,
       color: Colors.white,
     );
   }
@@ -20,7 +20,7 @@ class CustomTextStyle {
   static TextStyle buttonYellow (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
-      fontSize: 46.0,
+      fontSize: 34.0,
       color: Color(0xFFebff4e),
     );
   }
@@ -28,15 +28,15 @@ class CustomTextStyle {
   static TextStyle buttonRed (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
-      fontSize: 46.0,
-      color: Color(0xFFff206f),
+      fontSize: 34.0,
+      color: Color(0xFFf41056),
     );
   }
 
   static TextStyle buttonGreen (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
-      fontSize: 46.0,
+      fontSize: 34.0,
       color: Color(0xFF21ffbb),
     );
   }
@@ -44,8 +44,16 @@ class CustomTextStyle {
   static TextStyle buttonDisabled (BuildContext context) {
     return Theme.of(context).textTheme.display4.copyWith(
       fontWeight: FontWeight.w100,
-      fontSize: 46.0,
+      fontSize: 34.0,
       fontStyle: FontStyle.italic,
+      color: Color(0xFF999999),
+    );
+  }
+
+  static TextStyle detail (BuildContext context) {
+    return Theme.of(context).textTheme.display4.copyWith(
+      fontWeight: FontWeight.normal,
+      fontSize: 16.0,
       color: Color(0xFF999999),
     );
   }

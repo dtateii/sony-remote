@@ -32,30 +32,30 @@ class _ScreenSplashState extends State<ScreenSplash> {
         MaterialPageRoute(builder: (context) => ScreenErrorWifi()),
       );
     } else {
-      print('Network test passed.');
+      print('Wifi on.');
 
       // Todo: Need to handle unresponsive device.
 
       // Only proceed to Screen if power is on standby.
-      http.post(
-      appConf.Api.getUri("system"),
-      body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}')
-      .then((response){
-        if (200 == response.statusCode) {
-          var apiRes = jsonDecode(response.body);
-          if (apiRes['result'][0]['status'] == "active") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ScreenSource()),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ScreenPower()),
-            );
-          }
+      var response = await http.post(
+        appConf.Api.getUri("system"),
+        body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}');
+      if (200 == response.statusCode) {
+        var apiRes = jsonDecode(response.body);
+        if (apiRes['result'][0]['status'] == "active") {
+          print('active');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ScreenSource()),
+          );
+        } else {
+          print('standby');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ScreenPower()),
+          );
         }
-      });
+      }
     }
     _isWorking = false;
   }
@@ -83,10 +83,10 @@ class _ScreenSplashState extends State<ScreenSplash> {
                       )
                     ),
                     Container (
-                      padding: const EdgeInsets.only(top: 340),
+                      padding: const EdgeInsets.only(top: 290),
                       child: (_isWorking
                         ? CircularProgressIndicator()
-                        : Image.asset('assets/logo-nji-white.png', width: 240)
+                        : Image.asset('assets/logo-nji-white.png', width: 180)
                       ),
                     )
                   ],

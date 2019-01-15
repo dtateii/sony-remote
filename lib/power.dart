@@ -64,20 +64,27 @@ class ScreenPower extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.only(top:20),
+                          padding: const EdgeInsets.only(top:14),
                           child: ( snapshot.data['status'] == 'standby'
                             ? Text(
-                              'RECEIVER IS OFF',
+                              'RECEIVER ON STANDBY',
                               style: CustomTextStyle.label(context),
                             )
                             : Text(
-                              'RECEIVER IS ON',
+                              'RECEIVER ACTIVE',
                               style: CustomTextStyle.label(context),
                             )
                           )
                         ),
                         Container(
-                          padding: const EdgeInsets.only(top:200),
+                          padding: const EdgeInsets.only(top:170),
+                          child: ( snapshot.data['status'] == 'standby'
+                            ? Image.asset('assets/icon-power-up.png', width: 52)
+                            : Image.asset('assets/icon-power-down.png', width: 52)
+                          )
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top:20),
                           child: ( snapshot.data['status'] == 'standby'
                             ? RaisedButton(
                               color: Colors.transparent,

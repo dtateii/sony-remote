@@ -33,14 +33,14 @@ class _MethodState extends State<ScreenMethod> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.only(top:20),
+                    padding: const EdgeInsets.only(top:14),
                     child: Text(
                       'METHOD',
                       style: CustomTextStyle.label(context),
                     )
                   ),
                   Container(
-                    padding: const EdgeInsets.only(top:120),
+                    padding: const EdgeInsets.only(top:100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
