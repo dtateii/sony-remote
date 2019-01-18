@@ -4,6 +4,7 @@ import 'audioControls.dart';
 import 'method.dart';
 import 'dest.dart';
 import 'model.dart';
+import 'timeout.dart';
 
 class ScreenSource extends StatefulWidget {
   @override
@@ -42,6 +43,7 @@ class _SourceState extends State<ScreenSource> {
       body: Container(
         child: Row(
           children: [
+            TimeOut(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

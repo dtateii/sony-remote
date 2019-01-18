@@ -8,7 +8,7 @@ class AudioControls extends StatefulWidget {
 
 class _AudioControlsState extends State<AudioControls> {
 
-  double _volume = 10;
+  // double _volume = 10;
 
   volumeChange(){
     print('change volume');

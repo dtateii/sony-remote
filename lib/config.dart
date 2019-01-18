@@ -1,7 +1,9 @@
 class Api {
 
+  static const ipv4 = '10.1.10.81';
+  static const port = '10000';
   static String getUri(lib) {
-    return 'http://10.1.10.81:10000/sony/' + lib;
+    return 'http://' + ipv4 + ':' + port + '/sony/' + lib;
   }
 
 }

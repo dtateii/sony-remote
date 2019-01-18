@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'theme.dart';
 import 'config.dart' as appConf;
 import 'errorWifi.dart';
+import 'errorNoResponse.dart';
 import 'source.dart';
 import 'power.dart';
 
@@ -34,28 +36,37 @@ class _ScreenSplashState extends State<ScreenSplash> {
     } else {
       print('Wifi on.');
 
-      // Todo: Need to handle unresponsive device.
-
       // Only proceed to Screen if power is on standby.
-      var response = await http.post(
-        appConf.Api.getUri("system"),
-        body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}');
-      if (200 == response.statusCode) {
-        var apiRes = jsonDecode(response.body);
-        if (apiRes['result'][0]['status'] == "active") {
-          print('active');
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ScreenSource()),
-          );
-        } else {
-          print('standby');
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ScreenPower()),
-          );
+      try {
+        var response = await http.post(
+          appConf.Api.getUri("system"),
+          body: '{"method": "getPowerStatus","id": 65,"params": [],"version": "1.1"}')
+          .timeout(new Duration(seconds: 6));
+
+        if (200 == response.statusCode) {
+          var apiRes = jsonDecode(response.body);
+          if (apiRes['result'][0]['status'] == "active") {
+            print('Receiver is Active.');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScreenSource()),
+            );
+          } else {
+            print('Receiver on Standby.');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ScreenPower()),
+            );
+          }
         }
+      } on TimeoutException catch (_) {
+        print('Receiver is unresponsive.');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ScreenErrorNoResponse()),
+        );
       }
+
     }
     _isWorking = false;
   }

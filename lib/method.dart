@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'audioControls.dart';
+import 'timeout.dart';
 import 'dest.dart';
 import 'model.dart';
 
@@ -28,6 +29,7 @@ class _MethodState extends State<ScreenMethod> {
       body: Container(
         child: Row(
           children: [
+            TimeOut(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
