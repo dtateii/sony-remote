@@ -23,10 +23,10 @@ class ScreenErrorNoResponse extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.only(top:150),
-                    child: Image.asset('assets/icon-wifi-no.png', width: 80)
+                    child: Image.asset('assets/icon-unresponsive.png', width: 112)
                   ),
                   Container (
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 60),
                     child: RaisedButton(
                       color: Colors.transparent,
                       onPressed: () {
