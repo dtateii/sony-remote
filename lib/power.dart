@@ -7,7 +7,14 @@ import 'config.dart' as appConf;
 import 'splash.dart';
 import 'source.dart';
 
-class ScreenPower extends StatelessWidget {
+class ScreenPower extends StatefulWidget {
+  @override
+  _ScreenPowerState createState() => _ScreenPowerState();
+}
+
+class _ScreenPowerState extends State<ScreenSplash> {
+
+  final timeOutStreamController = new StreamController.broadcast();
 
   Future _getPowerStatus(context) async {
     var response = await http.post(
@@ -28,7 +35,7 @@ class ScreenPower extends StatelessWidget {
     if (200 == response.statusCode) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ScreenSource()),
+        MaterialPageRoute(builder: (context) => ScreenSource(timeOutStreamController: timeOutStreamController)),
       );
     }
   }
@@ -43,6 +50,12 @@ class ScreenPower extends StatelessWidget {
         MaterialPageRoute(builder: (context) => ScreenSplash()),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    timeOutStreamController.close();
+    super.dispose();
   }
 
   @override

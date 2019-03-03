@@ -9,6 +9,7 @@ import 'errorWifi.dart';
 import 'errorNoResponse.dart';
 import 'source.dart';
 import 'power.dart';
+import 'timeout.dart';
 
 class ScreenSplash extends StatefulWidget {
   @override
@@ -17,7 +18,16 @@ class ScreenSplash extends StatefulWidget {
 
 class _ScreenSplashState extends State<ScreenSplash> {
 
+  final timeOutStreamController = new StreamController.broadcast();
   bool _isWorking = false;
+
+
+  @override
+  void dispose() {
+    print('dispose Splash called.');
+    timeOutStreamController.close();
+    super.dispose();
+  }
 
   void checkNetwork(context) async {
 
@@ -47,9 +57,11 @@ class _ScreenSplashState extends State<ScreenSplash> {
           var apiRes = jsonDecode(response.body);
           if (apiRes['result'][0]['status'] == "active") {
             print('Receiver is Active.');
+            // Next screen is source. Start the TimeOut timer for this screen.
+            timeOutStreamController.sink.add('start');
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ScreenSource()),
+              MaterialPageRoute(builder: (context) => ScreenSource(timeOutStreamController: timeOutStreamController)),
             );
           } else {
             print('Receiver on Standby.');
@@ -76,12 +88,15 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
     return GestureDetector(
       onTap: () {
+        // Don't necessarily start timer on any tap event -- possible
+        // error screen could be next, and shouldn't timeout/reset.
         checkNetwork(context);
       },
       child: Scaffold(
         body: Container(
           child: Row(
             children: [
+              TimeOut(timeOutStream: timeOutStreamController.stream),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
